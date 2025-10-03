@@ -85,7 +85,13 @@ class RedirectNetworkSession: NSObject, NetworkSessionProtocol {
     }
     
     func createDataTask(with url: URL, completionHandler: @escaping CompletionHandler) -> DataTaskProtocol {
-        networkSession.createDataTask(with: url, completionHandler: completionHandler)
+        var task = networkSession.createDataTask(with: url, completionHandler: completionHandler)
+        if #available(iOS 15.0, *) {
+            (task as? URLSessionTask)?.delegate = self
+        } else {
+            // no fallback needed because the URLSession's Delegate will be called
+        }
+        return task
     }
     
     private lazy var networkSession: NetworkSessionProtocol = {
