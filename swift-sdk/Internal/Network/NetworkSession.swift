@@ -42,6 +42,10 @@ extension URLSession: NetworkSessionProtocol {
             completionHandler(data, response, error)
         }
         
+        if #available(iOS 15.0, *), let taskDelegate = self.delegate as? URLSessionTaskDelegate {
+            task.delegate = taskDelegate
+        }
+        
         task.resume()
     }
     
@@ -50,11 +54,21 @@ extension URLSession: NetworkSessionProtocol {
             completionHandler(data, response, error)
         }
         
+        if #available(iOS 15.0, *), let taskDelegate = self.delegate as? URLSessionTaskDelegate {
+            task.delegate = taskDelegate
+        }
+        
         task.resume()
     }
 
     func createDataTask(with url: URL, completionHandler: @escaping CompletionHandler) -> DataTaskProtocol {
-        dataTask(with: url, completionHandler: completionHandler)
+        let task = dataTask(with: url, completionHandler: completionHandler)
+        
+        if #available(iOS 15.0, *), let taskDelegate = self.delegate as? URLSessionTaskDelegate {
+            task.delegate = taskDelegate
+        }
+        
+        return task
     }
 }
 
@@ -86,11 +100,11 @@ class RedirectNetworkSession: NSObject, NetworkSessionProtocol {
     
     func createDataTask(with url: URL, completionHandler: @escaping CompletionHandler) -> DataTaskProtocol {
         var task = networkSession.createDataTask(with: url, completionHandler: completionHandler)
+        
         if #available(iOS 15.0, *) {
             (task as? URLSessionTask)?.delegate = self
-        } else {
-            // no fallback needed because the URLSession's Delegate will be called
         }
+        
         return task
     }
     
