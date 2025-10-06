@@ -120,25 +120,11 @@ class RedirectNetworkSession: NSObject, NetworkSessionProtocol {
 }
 
 extension RedirectNetworkSession: URLSessionDelegate, URLSessionTaskDelegate {
-    
-    internal func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest) async -> URLRequest? {
-        handleRedirect(willPerformHTTPRedirection: response, newRequest: request)
-        return request
-    }
-    
-//    internal func urlSession(_: URLSession,
-//                           task _: URLSessionTask,
-//                           willPerformHTTPRedirection response: HTTPURLResponse,
-//                           newRequest request: URLRequest,
-//                           completionHandler: @escaping (URLRequest?) -> Void) {
-//        handleRedirect(willPerformHTTPRedirection: response, newRequest: request)
-//        completionHandler(request)
-//    }
-    
-    internal func handleRedirect(
-        willPerformHTTPRedirection response: HTTPURLResponse,
-        newRequest request: URLRequest
-    ) {
+    internal func urlSession(_: URLSession,
+                           task _: URLSessionTask,
+                           willPerformHTTPRedirection response: HTTPURLResponse,
+                           newRequest request: URLRequest,
+                           completionHandler: @escaping (URLRequest?) -> Void) {
         var deepLinkLocation: URL? = nil
         var campaignId: NSNumber? = nil
         var templateId: NSNumber? = nil
@@ -167,6 +153,7 @@ extension RedirectNetworkSession: URLSessionDelegate, URLSessionTaskDelegate {
         }
         
         delegate?.onRedirect(deepLinkLocation: deepLinkLocation, campaignId: campaignId, templateId: templateId, messageId: messageId)
+        completionHandler(request)
     }
     
     private func number(fromString str: String) -> NSNumber {
