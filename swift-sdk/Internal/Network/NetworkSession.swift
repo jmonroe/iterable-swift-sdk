@@ -120,7 +120,7 @@ class RedirectNetworkSession: NSObject, NetworkSessionProtocol {
 }
 
 extension RedirectNetworkSession: URLSessionDelegate, URLSessionTaskDelegate {
-    internal func urlSession(_: URLSession,
+    public func urlSession(_: URLSession,
                            task _: URLSessionTask,
                            willPerformHTTPRedirection response: HTTPURLResponse,
                            newRequest request: URLRequest,
